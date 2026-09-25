@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePlan } from "@/context/PlanContext";
+import Image from "next/image";
 
 export default function Navbar() {
     const pathname = usePathname();
@@ -21,8 +22,15 @@ export default function Navbar() {
         <header className="w-full bg-[#0d0e12] border-b border-zinc-800/80 sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 {/* Brand Logo */}
-                <Link href="/" className="flex items-center gap-2 text-xl font-black tracking-wider uppercase text-white">
-                    <span className="text-[#ccff00]">⚡</span> FITLOG
+                <Link href="/" className="flex items-center gap-2 text-xl font-black tracking-wider uppercase">
+                <Image 
+                    src="/assets/logo.png" 
+                    alt="Fitlog Logo" 
+                    width={24} 
+                    height={24} 
+                    className="object-contain"
+                />
+                FITLOG
                 </Link>
 
                 {/* Center Nav Links */}

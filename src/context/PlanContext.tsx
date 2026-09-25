@@ -28,9 +28,10 @@ const PlanContext = createContext<PlanContextType | undefined>(undefined);
 export function PlanProvider({ children }: { children: React.ReactNode }) {
     const [todaysPlan, setTodaysPlan] = useState<WorkoutItem[]>([]);
     const [savedPlan, setSavedPlan] = useState<WorkoutItem[]>([]);
+    const [isLoaded, setIsLoaded] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-    // Load from LocalStorage only when client loads
+    // Initial load on mount
     useEffect(() => {
         try {
             const localToday = localStorage.getItem("fitlog_today");
@@ -38,18 +39,24 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
             if (localToday) setTodaysPlan(JSON.parse(localToday));
             if (localSaved) setSavedPlan(JSON.parse(localSaved));
         } catch (e) {
-            console.error("Failed to load local storage", e);
+            console.error("Error loading local storage:", e);
+        } finally {
+            setIsLoaded(true);
         }
     }, []);
 
-    // Sync to LocalStorage when states change
+    // Sync to LocalStorage ONLY after initial load completes
     useEffect(() => {
-        localStorage.setItem("fitlog_today", JSON.stringify(todaysPlan));
-    }, [todaysPlan]);
+        if (isLoaded) {
+            localStorage.setItem("fitlog_today", JSON.stringify(todaysPlan));
+        }
+    }, [todaysPlan, isLoaded]);
 
     useEffect(() => {
-        localStorage.setItem("fitlog_saved", JSON.stringify(savedPlan));
-    }, [savedPlan]);
+        if (isLoaded) {
+            localStorage.setItem("fitlog_saved", JSON.stringify(savedPlan));
+        }
+    }, [savedPlan, isLoaded]);
 
     const triggerToast = (msg: string) => {
         setToastMessage(msg);
@@ -59,34 +66,34 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     };
 
     const addToTodaysPlan = (workout: WorkoutItem) => {
-        const isAlreadyAdded = todaysPlan.some((item) => item.id === workout.id);
-
-        if (isAlreadyAdded) {
+        const targetId = String(workout.id);
+        if (todaysPlan.some((item) => String(item.id) === targetId)) {
             triggerToast("Already added to Today's Plan!");
-        } else {
-            setTodaysPlan((prev) => [...prev, workout]);
-            triggerToast("Added to Today's Plan");
+            return;
         }
+        setTodaysPlan((prev) => [...prev, { ...workout, id: String(workout.id) }]);
+        triggerToast("Added to Today's Plan");
     };
 
     const addToSavedPlan = (workout: WorkoutItem) => {
-        const isAlreadyAdded = savedPlan.some((item) => item.id === workout.id);
-
-        if (isAlreadyAdded) {
+        const targetId = String(workout.id);
+        if (savedPlan.some((item) => String(item.id) === targetId)) {
             triggerToast("Already in Saved Workouts!");
-        } else {
-            setSavedPlan((prev) => [...prev, workout]);
-            triggerToast("Added to Saved Workouts");
+            return;
         }
+        setSavedPlan((prev) => [...prev, { ...workout, id: String(workout.id) }]);
+        triggerToast("Added to Saved Workouts");
     };
 
     const removeFromTodaysPlan = (id: string) => {
-        setTodaysPlan((prev) => prev.filter((item) => item.id !== id));
+        const targetId = String(id);
+        setTodaysPlan((prev) => prev.filter((item) => String(item.id) !== targetId));
         triggerToast("Removed from Today's Plan");
     };
 
     const removeFromSavedPlan = (id: string) => {
-        setSavedPlan((prev) => prev.filter((item) => item.id !== id));
+        const targetId = String(id);
+        setSavedPlan((prev) => prev.filter((item) => String(item.id) !== targetId));
         triggerToast("Removed from Saved Workouts");
     };
 

@@ -1,19 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { usePlan, WorkoutItem } from "@/context/PlanContext";
 
-export default function MyPlanPage() {
+function MyPlanContent() {
+    const searchParams = useSearchParams();
+    const tabParam = searchParams.get("tab");
+
     const { todaysPlan, savedPlan, removeFromTodaysPlan, removeFromSavedPlan } = usePlan();
     const [activeTab, setActiveTab] = useState<"today" | "saved">("today");
     const [sortBy, setSortBy] = useState<"duration" | "calories" | "rating">("duration");
     const [completedIds, setCompletedIds] = useState<string[]>([]);
 
+    useEffect(() => {
+        if (tabParam === "saved") {
+            setActiveTab("saved");
+        } else if (tabParam === "today") {
+            setActiveTab("today");
+        }
+    }, [tabParam]);
+
+    
     const currentList = activeTab === "today" ? todaysPlan : savedPlan;
 
-    // Sorting Logic (Duration, Calories, Rating)
+    
+    const totalExercises = currentList.length;
+    const totalMinutes = currentList.reduce(
+        (acc, item) => acc + (item.duration ?? item.time ?? 0),
+        0
+    );
+    const totalCalories = currentList.reduce(
+        (acc, item) => acc + (item.calories ?? item.calori ?? 0),
+        0
+    );
+
     const sortedList = [...currentList].sort((a, b) => {
         const durA = a.duration ?? a.time ?? 0;
         const durB = b.duration ?? b.time ?? 0;
@@ -22,26 +45,16 @@ export default function MyPlanPage() {
         const ratA = a.rating ?? 4.8;
         const ratB = b.rating ?? 4.8;
 
-        if (sortBy === "duration") return durB - durA;
+        if (sortBy === "duration") return durA - durB;
         if (sortBy === "calories") return calB - calA;
         if (sortBy === "rating") return ratB - ratA;
         return 0;
     });
 
-    // Calculate Header Stats
-    const totalExercises = todaysPlan.length;
-    const totalMinutes = todaysPlan.reduce(
-        (acc, item) => acc + (item.duration ?? item.time ?? 0),
-        0
-    );
-    const totalCalories = todaysPlan.reduce(
-        (acc, item) => acc + (item.calories ?? item.calori ?? 0),
-        0
-    );
-
     const toggleComplete = (id: string) => {
+        const stringId = String(id);
         setCompletedIds((prev) =>
-            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+            prev.includes(stringId) ? prev.filter((item) => item !== stringId) : [...prev, stringId]
         );
     };
 
@@ -57,7 +70,6 @@ export default function MyPlanPage() {
     return (
         <main className="min-h-screen bg-[#0d0e12] text-white py-10 px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-
                 {/* Header Section */}
                 <div className="mb-8">
                     <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-wider text-white">
@@ -119,7 +131,6 @@ export default function MyPlanPage() {
                         </button>
                     </div>
 
-                    {/* Sort By Dropdown including Duration, Calories, Rating */}
                     <div className="flex items-center gap-2 text-xs text-zinc-400">
                         <span>Sort By</span>
                         <select
@@ -155,13 +166,14 @@ export default function MyPlanPage() {
                 ) : (
                     <div className="space-y-4">
                         {sortedList.map((item) => {
-                            const isDone = completedIds.includes(item.id);
+                            const itemId = String(item.id);
+                            const isDone = completedIds.includes(itemId);
                             const duration = item.duration ?? item.time ?? 15;
                             const calories = item.calories ?? item.calori ?? 120;
 
                             return (
                                 <div
-                                    key={item.id}
+                                    key={`${activeTab}-${itemId}`}
                                     className="bg-[#13151d] border border-zinc-800/80 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-zinc-700 transition-colors"
                                 >
                                     <div className="flex items-center gap-4">
@@ -190,7 +202,7 @@ export default function MyPlanPage() {
 
                                     <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                                         <Link
-                                            href={`/workout/${item.id}`}
+                                            href={`/workout/${itemId}`}
                                             className="bg-zinc-800/80 hover:bg-zinc-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors"
                                         >
                                             View Details
@@ -198,7 +210,7 @@ export default function MyPlanPage() {
 
                                         {activeTab === "today" && (
                                             <button
-                                                onClick={() => toggleComplete(item.id)}
+                                                onClick={() => toggleComplete(itemId)}
                                                 className={`text-xs font-black px-4 py-2 rounded-xl transition-all flex items-center gap-1 ${isDone
                                                         ? "bg-zinc-700 text-zinc-300"
                                                         : "bg-[#ccff00] text-black hover:bg-[#b8e600]"
@@ -209,11 +221,13 @@ export default function MyPlanPage() {
                                         )}
 
                                         <button
-                                            onClick={() =>
-                                                activeTab === "today"
-                                                    ? removeFromTodaysPlan(item.id)
-                                                    : removeFromSavedPlan(item.id)
-                                            }
+                                            onClick={() => {
+                                                if (activeTab === "today") {
+                                                    removeFromTodaysPlan(itemId);
+                                                } else {
+                                                    removeFromSavedPlan(itemId);
+                                                }
+                                            }}
                                             className="text-zinc-500 hover:text-white p-2 text-sm transition-colors"
                                             title="Remove"
                                         >
@@ -225,8 +239,15 @@ export default function MyPlanPage() {
                         })}
                     </div>
                 )}
-
             </div>
         </main>
+    );
+}
+
+export default function MyPlanPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#0d0e12]" />}>
+            <MyPlanContent />
+        </Suspense>
     );
 }
