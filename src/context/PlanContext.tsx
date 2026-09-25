@@ -112,8 +112,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
 
             {/* Top Right Toast Notification */}
             {toastMessage && (
-                <div className="fixed top-5 right-5 z-[9999] bg-[#ccff00] text-black font-black text-xs px-5 py-3 rounded-xl shadow-2xl shadow-[#ccff00]/20 border border-black/10 flex items-center gap-2 animate-bounce">
-                    <span>⚡</span>
+                <div className="fixed top-20 right-5 z-[9999] bg-[#ccff00] text-black font-extrabold text-[11px] px-3.5 py-2 rounded-lg shadow-xl shadow-[#ccff00]/10 border border-black/10 flex items-center gap-1.5 animate-bounce">
+                    <span className="text-xs">⚡</span>
                     <span>{toastMessage}</span>
                 </div>
             )}

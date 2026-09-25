@@ -1,36 +1,23 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FitLog — Workout & Gym Companion
 
-## Getting Started
+A modern dark-themed workout tracking web application built with Next.js,TypeScript and Tailwind CSS.FitLog allows users to explore workout libraries,build daily exercise plans,save favorites and track their fitness journey with real-time stats and local persistence.
 
-First, run the development server:
+*Live Site: [https://fit-log-dun-chi.vercel.app](https://fit-log-dun-chi.vercel.app)
+*Repository: [https://github.com/mushfiq-khan/fit-log](https://github.com/mushfiq-khan/fit-log)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# Technologies Used
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+*Framework: Next.js (App Router)
+*Language: TypeScript
+*Styling: Tailwind CSS
+*State Management: React Context API (`PlanContext`)
+*Data Persistence: Browser `localStorage`
+*Icons & UI: Custom Icons,Custom Toast Notifications
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Key Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Interactive Workout Library: Browse 12+ workouts with category badges,duration,calorie estimates and equipment details presented in a responsive grid.
+2. Dynamic Plan & Saved Lists: Decoupled dual-list system allowing users to independently manage "Today's Plan" and "Saved Workouts".
+3. Smart Sorting Logic: Multi-criteria sorting that orders duration and calories in descending order (High to Low) and ratings in ascending order (Low to High).
+4. Live Metrics Dashboard: Real-time metrics tracking for total planned exercises,accumulated workout minutes and target calories burned.
+5. Local Storage Persistence & Custom Toast System: Saves all selections locally so data survives page reloads,accompanied by custom floating toast notifications for user interactions.

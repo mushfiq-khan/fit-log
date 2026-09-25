@@ -389,14 +389,14 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
                         <div className="flex flex-wrap sm:flex-nowrap gap-3">
                             <button
                                 onClick={() => addToTodaysPlan(selectedWorkout)}
-                                className="flex-1 bg-[#ccff00] hover:bg-[#b8e600] text-black font-black text-xs uppercase py-3 px-5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95"
+                                className="flex-1 bg-[#ccff00] hover:bg-[#b8e600] text-black font-black text-xs uppercase py-3 px-5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
                             >
                                 <span>📅</span> Add to today's plan
                             </button>
 
                             <button
                                 onClick={() => addToSavedPlan(selectedWorkout)}
-                                className="bg-[#13151d] hover:bg-zinc-800 border border-zinc-800 text-white font-bold text-xs uppercase py-3 px-5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95"
+                                className="bg-[#13151d] hover:bg-zinc-800 border border-zinc-800 text-white font-bold text-xs uppercase py-3 px-5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
                             >
                                 <span>🔖</span> Save for later
                             </button>
