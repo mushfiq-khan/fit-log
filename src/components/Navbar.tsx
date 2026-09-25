@@ -2,67 +2,60 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { usePlan } from "../context/PlanContext";
-import Image from "next/image";
+import { usePlan } from "@/context/PlanContext";
 
 export default function Navbar() {
     const pathname = usePathname();
-    const { planItems, savedItems } = usePlan();
+    const context = usePlan();
+
+    // Safe fallback to prevent undefined length error
+    const todaysPlan = context?.todaysPlan || [];
+    const savedPlan = context?.savedPlan || [];
 
     return (
-        <header className="w-full bg-[#0a0b0d] border-b border-zinc-800/80 text-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2.5">
-                        <Image src="/assets/logo.png" alt="FitLog Logo" width={28} height={28} />
-                        <span className="text-white font-extrabold tracking-wide uppercase text-xl">FITLOG</span>
+        <header className="w-full bg-[#0d0e12] border-b border-zinc-800/80 sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                {/* Brand Logo */}
+                <Link href="/" className="flex items-center gap-2 text-xl font-black tracking-wider uppercase text-white">
+                    <span className="text-[#ccff00]">⚡</span> FITLOG
+                </Link>
+
+                {/* Center Nav Links */}
+                <nav className="flex items-center gap-2 bg-[#13151d] border border-zinc-800/80 p-1 rounded-full">
+                    <Link
+                        href="/"
+                        className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all ${pathname === "/"
+                                ? "bg-zinc-800 text-white"
+                                : "text-zinc-400 hover:text-white"
+                            }`}
+                    >
+                        Workouts
                     </Link>
-
-                    {/* Navigation Links */}
-                    <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-full border border-zinc-800">
-                        <Link
-                            href="/"
-                            className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all ${pathname === "/"
-                                ? "bg-[#1f2605] text-[#ccff00]"
+                    <Link
+                        href="/my-plan"
+                        className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all ${pathname === "/my-plan"
+                                ? "bg-[#ccff00] text-black"
                                 : "text-zinc-400 hover:text-white"
-                                }`}
-                        >
-                            Workouts
-                        </Link>
+                            }`}
+                    >
+                        My Plan
+                    </Link>
+                </nav>
 
-                        <Link
-                            href="/my-plan"
-                            className={`px-5 py-1.5 rounded-full text-xs font-medium transition-all ${pathname === "/my-plan"
-                                ? "bg-[#1f2605] text-[#ccff00] font-bold"
-                                : "text-zinc-400 hover:text-white"
-                                }`}
-                        >
-                            My Plan
-                        </Link>
-                    </nav>
-
-                    
-                    <div className="flex items-center gap-5 text-xs font-medium">
-
-                        {/* Plan Badge (Filled Pill) */}
-                        <Link href="/my-plan" className="flex items-center gap-2 text-zinc-300 hover:text-white">
-                            <span>Plan</span>
-                            <span className="bg-[#ccff00] text-black font-black text-[11px] w-5 h-5 rounded-full flex items-center justify-center">
-                                {planItems.length}
-                            </span>
-                        </Link>
-
-                        {/* Saved Badge (Outline Pill) */}
-                        <Link href="/my-plan" className="flex items-center gap-2 text-zinc-300 hover:text-white">
-                            <span>Saved</span>
-                            <span className="border border-zinc-600 text-zinc-300 font-medium text-[11px] w-5 h-5 rounded-full flex items-center justify-center">
-                                {savedItems.length}
-                            </span>
-                        </Link>
-
+                {/* Right Counter Badges */}
+                <div className="flex items-center gap-4 text-xs font-bold text-zinc-400">
+                    <div className="flex items-center gap-1.5">
+                        <span>Plan</span>
+                        <span className="bg-[#ccff00] text-black px-2 py-0.5 rounded-full text-[11px] font-black min-w-[20px] text-center">
+                            {todaysPlan.length}
+                        </span>
                     </div>
-
+                    <div className="flex items-center gap-1.5">
+                        <span>Saved</span>
+                        <span className="bg-zinc-800 text-white px-2 py-0.5 rounded-full text-[11px] font-black border border-zinc-700 min-w-[20px] text-center">
+                            {savedPlan.length}
+                        </span>
+                    </div>
                 </div>
             </div>
         </header>

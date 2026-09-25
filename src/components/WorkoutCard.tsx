@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 export interface Workout {
     id: string;
@@ -16,7 +17,6 @@ export interface Workout {
 }
 
 export default function WorkoutCard({ workout }: { workout: Workout }) {
-    // Helper to map exact categories based on workout name from Figma UI
     const getCategories = (name: string): string[] => {
         const n = name.toLowerCase();
         if (n.includes("bench press")) return ["CHEST", "ARMS"];
@@ -30,13 +30,11 @@ export default function WorkoutCard({ workout }: { workout: Workout }) {
         if (n.includes("lunge")) return ["LEGS"];
         if (n.includes("twist")) return ["CORE"];
 
-        // Fallback if provided by API
         if (Array.isArray(workout.category)) return workout.category;
         if (typeof workout.category === "string") return [workout.category];
         return ["WORKOUT"];
     };
 
-    // Helper to map exact equipment based on workout name from Figma UI
     const getEquipment = (name: string): string => {
         const n = name.toLowerCase();
         if (n.includes("bench press")) return "Barbell, Bench";
@@ -57,53 +55,55 @@ export default function WorkoutCard({ workout }: { workout: Workout }) {
     const durationValue = workout.duration ?? workout.time ?? 20;
 
     return (
-        <div className="bg-[#12141c] border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between hover:border-zinc-700 transition-all duration-200">
-            <div>
-                {/* Card Header Image */}
-                <div className="relative w-full h-48 bg-zinc-900/60 rounded-xl overflow-hidden mb-4">
-                    <Image
-                        src={workout.image}
-                        alt={workout.name}
-                        fill
-                        className="object-cover"
-                    />
-                </div>
+        <Link href={`/workout/${workout.id}`} className="block group h-full">
+            <div className="bg-[#12141c] border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between group-hover:border-zinc-700 transition-all duration-200 h-full">
+                <div>
+                    {/* Card Header Image */}
+                    <div className="relative w-full h-48 bg-zinc-900/60 rounded-xl overflow-hidden mb-4">
+                        <Image
+                            src={workout.image}
+                            alt={workout.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                    </div>
 
-                {/* Category Badges (CHEST, ARMS, CORE etc.) */}
-                <div className="flex flex-wrap gap-1.5 mb-2.5 min-h-[22px]">
-                    {categoriesList.map((cat, idx) => (
-                        <span
-                            key={idx}
-                            className="text-[10px] uppercase font-black bg-[#ccff00] text-black px-2.5 py-0.5 rounded-full tracking-wider inline-block"
-                        >
-                            {cat}
+                    {/* Category Badges */}
+                    <div className="flex flex-wrap gap-1.5 mb-2.5 min-h-[22px]">
+                        {categoriesList.map((cat, idx) => (
+                            <span
+                                key={idx}
+                                className="text-[10px] uppercase font-black bg-[#ccff00] text-black px-2.5 py-0.5 rounded-full tracking-wider inline-block"
+                            >
+                                {cat}
+                            </span>
+                        ))}
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-sm font-black text-white uppercase tracking-wider mb-1 line-clamp-1 group-hover:text-[#ccff00] transition-colors">
+                        {workout.name}
+                    </h3>
+
+                    {/* Equipment Subtitle */}
+                    <p className="text-xs text-zinc-500 font-medium mb-4 line-clamp-1">
+                        {getEquipment(workout.name)}
+                    </p>
+
+                    {/* Meta details */}
+                    <div className="flex items-center gap-3 text-xs text-zinc-400 font-medium">
+                        <span className="flex items-center gap-1">
+                            <span className="text-zinc-500">🕒</span> {durationValue} min
                         </span>
-                    ))}
-                </div>
-
-                {/* Title */}
-                <h3 className="text-sm font-black text-white uppercase tracking-wider mb-1 line-clamp-1">
-                    {workout.name}
-                </h3>
-
-                {/* Equipment Subtitle */}
-                <p className="text-xs text-zinc-500 font-medium mb-4 line-clamp-1">
-                    {getEquipment(workout.name)}
-                </p>
-
-                {/* Meta details: Time, Calories, Rating */}
-                <div className="flex items-center gap-3 text-xs text-zinc-400 font-medium">
-                    <span className="flex items-center gap-1">
-                        <span className="text-zinc-500">🕒</span> {durationValue} min
-                    </span>
-                    <span className="flex items-center gap-1">
-                        <span className="text-zinc-500">🔥</span> {caloriesValue} kcal
-                    </span>
-                    <span className="flex items-center gap-1">
-                        <span className="text-zinc-500">⭐</span> {workout.rating || 4.8}
-                    </span>
+                        <span className="flex items-center gap-1">
+                            <span className="text-zinc-500">🔥</span> {caloriesValue} kcal
+                        </span>
+                        <span className="flex items-center gap-1">
+                            <span className="text-zinc-500">⭐</span> {workout.rating || 4.8}
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

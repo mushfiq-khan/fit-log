@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePlan } from "@/context/PlanContext";
 
 interface WorkoutDetail {
     id: string;
@@ -25,6 +26,9 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
     const [workout, setWorkout] = useState<WorkoutDetail | null>(null);
     const [loading, setLoading] = useState(true);
 
+    // Context Actions
+    const { addToTodaysPlan, addToSavedPlan } = usePlan();
+
     useEffect(() => {
         async function fetchWorkout() {
             try {
@@ -34,7 +38,8 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
                 setWorkout(found || null);
             } catch (error) {
                 console.error("Error fetching workout details:", error);
-            } finally {
+            }
+      finally {
                 setLoading(false);
             }
         }
@@ -60,7 +65,6 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
         );
     }
 
-    // Exact mapping for 12 workouts matching Figma Design
     const getWorkoutSpecs = (name: string) => {
         const n = name.toLowerCase();
 
@@ -255,7 +259,6 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
             };
         }
 
-        // Default Fallback
         return {
             description: workout.description || "Comprehensive strength training exercise targeting specific muscle groups.",
             categories: Array.isArray(workout.category) ? workout.category : [workout.category || "Fitness"],
@@ -276,18 +279,25 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
 
     const specs = getWorkoutSpecs(workout.name);
 
+    // Object to pass to Context
+    const selectedWorkout = {
+        id: workout.id,
+        name: workout.name,
+        equipment: specs.equipment,
+        duration: specs.duration,
+        calories: specs.calories,
+        rating: specs.rating,
+        image: workout.image,
+    };
+
     return (
         <div className="min-h-screen bg-[#0d0e12] text-white flex flex-col justify-between p-4 sm:p-8 lg:p-12">
             <div className="max-w-6xl mx-auto w-full">
-                {/* Back Link */}
                 <Link href="/" className="inline-flex items-center gap-2 text-zinc-400 hover:text-white text-xs font-semibold mb-6 transition-colors">
                     ← Back to Library
                 </Link>
 
-                {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-
-                    {/* Left Column: Image */}
                     <div className="relative w-full aspect-square max-h-[520px] bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800/80">
                         <Image
                             src={workout.image}
@@ -298,7 +308,6 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
                         />
                     </div>
 
-                    {/* Right Column: Dynamic Data */}
                     <div className="flex flex-col justify-start">
                         <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-wider text-white mb-2">
                             {workout.name}
@@ -319,7 +328,6 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
                             ))}
                         </div>
 
-                        {/* Specifications Card */}
                         <div className="bg-[#13151d] border border-zinc-800/80 rounded-2xl p-5 mb-8 space-y-3.5 text-xs font-semibold">
                             <div className="flex justify-between items-center text-zinc-400">
                                 <span className="uppercase tracking-wider text-[11px]">EQUIPMENT</span>
@@ -363,7 +371,6 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
                             </div>
                         </div>
 
-                        {/* Instructions */}
                         <div className="mb-8">
                             <h3 className="text-xs font-black uppercase tracking-wider text-white mb-3">
                                 INSTRUCTIONS
@@ -378,12 +385,19 @@ export default function WorkoutDetailPage({ params }: { params: Promise<{ id: st
                             </ol>
                         </div>
 
-                        {/* Action Buttons */}
+                        {/* Functional Action Buttons */}
                         <div className="flex flex-wrap sm:flex-nowrap gap-3">
-                            <button className="flex-1 bg-[#ccff00] hover:bg-[#b8e600] text-black font-black text-xs uppercase py-3 px-5 rounded-xl transition-colors flex items-center justify-center gap-2">
+                            <button
+                                onClick={() => addToTodaysPlan(selectedWorkout)}
+                                className="flex-1 bg-[#ccff00] hover:bg-[#b8e600] text-black font-black text-xs uppercase py-3 px-5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95"
+                            >
                                 <span>📅</span> Add to today's plan
                             </button>
-                            <button className="bg-[#13151d] hover:bg-zinc-800 border border-zinc-800 text-white font-bold text-xs uppercase py-3 px-5 rounded-xl transition-colors flex items-center justify-center gap-2">
+
+                            <button
+                                onClick={() => addToSavedPlan(selectedWorkout)}
+                                className="bg-[#13151d] hover:bg-zinc-800 border border-zinc-800 text-white font-bold text-xs uppercase py-3 px-5 rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95"
+                            >
                                 <span>🔖</span> Save for later
                             </button>
                         </div>
