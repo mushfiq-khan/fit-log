@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function Hero() {
     return (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
-            {/* Figma Exact Card Background & Border */}
+            
             <div className="bg-[#12141c] border border-zinc-800/60 rounded-3xl p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-2xl">
 
                 {/* Left Text Block */}

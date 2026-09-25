@@ -19,7 +19,7 @@ export default function Navbar() {
                         <span className="text-white font-extrabold tracking-wide uppercase text-xl">FITLOG</span>
                     </Link>
 
-                    {/* 🟡 ২. মাঝখানে নেভিগেশন লিঙ্ক (Workouts & My Plan) */}
+                    {/* Navigation Links */}
                     <nav className="flex items-center gap-1 bg-zinc-900/90 p-1 rounded-full border border-zinc-800">
                         <Link
                             href="/"
@@ -42,7 +42,7 @@ export default function Navbar() {
                         </Link>
                     </nav>
 
-                    {/* 🔵 ৩. ডানদিকে স্ট্যাটাস ব্যাজ (Plan & Saved Counter -> Clickable to /my-plan) */}
+                    
                     <div className="flex items-center gap-5 text-xs font-medium">
 
                         {/* Plan Badge (Filled Pill) */}
