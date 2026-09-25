@@ -26,34 +26,23 @@ interface PlanContextType {
 const PlanContext = createContext<PlanContextType | undefined>(undefined);
 
 export function PlanProvider({ children }: { children: React.ReactNode }) {
-    // Lazy Initialization: useState initializer function completely avoids calling setState in useEffect
-    const [todaysPlan, setTodaysPlan] = useState<WorkoutItem[]>(() => {
-        if (typeof window !== "undefined") {
-            try {
-                const localToday = localStorage.getItem("fitlog_today");
-                return localToday ? JSON.parse(localToday) : [];
-            } catch (e) {
-                console.error("Failed to parse fitlog_today", e);
-            }
-        }
-        return [];
-    });
-
-    const [savedPlan, setSavedPlan] = useState<WorkoutItem[]>(() => {
-        if (typeof window !== "undefined") {
-            try {
-                const localSaved = localStorage.getItem("fitlog_saved");
-                return localSaved ? JSON.parse(localSaved) : [];
-            } catch (e) {
-                console.error("Failed to parse fitlog_saved", e);
-            }
-        }
-        return [];
-    });
-
+    const [todaysPlan, setTodaysPlan] = useState<WorkoutItem[]>([]);
+    const [savedPlan, setSavedPlan] = useState<WorkoutItem[]>([]);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-    // Sync state changes to LocalStorage
+    // Load from LocalStorage only when client loads
+    useEffect(() => {
+        try {
+            const localToday = localStorage.getItem("fitlog_today");
+            const localSaved = localStorage.getItem("fitlog_saved");
+            if (localToday) setTodaysPlan(JSON.parse(localToday));
+            if (localSaved) setSavedPlan(JSON.parse(localSaved));
+        } catch (e) {
+            console.error("Failed to load local storage", e);
+        }
+    }, []);
+
+    // Sync to LocalStorage when states change
     useEffect(() => {
         localStorage.setItem("fitlog_today", JSON.stringify(todaysPlan));
     }, [todaysPlan]);

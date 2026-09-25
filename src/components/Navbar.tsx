@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePlan } from "@/context/PlanContext";
@@ -7,8 +8,12 @@ import { usePlan } from "@/context/PlanContext";
 export default function Navbar() {
     const pathname = usePathname();
     const context = usePlan();
+    const [mounted, setMounted] = useState(false);
 
-    // Safe fallback to prevent undefined length error
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const todaysPlan = context?.todaysPlan || [];
     const savedPlan = context?.savedPlan || [];
 
@@ -42,20 +47,33 @@ export default function Navbar() {
                     </Link>
                 </nav>
 
-                {/* Right Counter Badges */}
+                {/* Right Clickable Counter Badges */}
                 <div className="flex items-center gap-4 text-xs font-bold text-zinc-400">
-                    <div className="flex items-center gap-1.5">
+                    <Link
+                        href="/my-plan?tab=today"
+                        className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+                    >
                         <span>Plan</span>
-                        <span className="bg-[#ccff00] text-black px-2 py-0.5 rounded-full text-[11px] font-black min-w-[20px] text-center">
-                            {todaysPlan.length}
+                        <span
+                            suppressHydrationWarning
+                            className="bg-[#ccff00] text-black px-2 py-0.5 rounded-full text-[11px] font-black min-w-[20px] text-center"
+                        >
+                            {mounted ? todaysPlan.length : 0}
                         </span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
+                    </Link>
+
+                    <Link
+                        href="/my-plan?tab=saved"
+                        className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+                    >
                         <span>Saved</span>
-                        <span className="bg-zinc-800 text-white px-2 py-0.5 rounded-full text-[11px] font-black border border-zinc-700 min-w-[20px] text-center">
-                            {savedPlan.length}
+                        <span
+                            suppressHydrationWarning
+                            className="bg-zinc-800 text-white px-2 py-0.5 rounded-full text-[11px] font-black border border-zinc-700 min-w-[20px] text-center"
+                        >
+                            {mounted ? savedPlan.length : 0}
                         </span>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </header>
