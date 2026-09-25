@@ -4,6 +4,7 @@ import "./globals.css";
 import { PlanProvider } from "../context/PlanContext";
 import Navbar from "../components/Navbar";
 import { Inter } from "next/font/google";
+import Footer from "../components/Footer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Navbar />
           {children}
         </PlanProvider>
+        <Footer />
       </body>
     </html>
   );
